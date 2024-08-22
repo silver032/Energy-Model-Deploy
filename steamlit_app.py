@@ -29,60 +29,70 @@ scaler = load_pickle_from_url(scaler_url)
 # Check if model and scaler are loaded correctly and are of the expected type
 if model is None or scaler is None:
     st.error("Failed to load model or scaler. Please check the file paths.")
-elif not hasattr(scaler, 'transform'):
-    st.error("The scaler object does not have the 'transform' method. Please ensure it is a valid scaler instance.")
 else:
-    # Title of the app
-    st.title("Energy Generation Classification App")
-
-    # Input fields for the features
-    st.header("Input the Features")
-
-    latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=0.0)
-    longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=0.0)
-    plant_age = st.number_input("Plant Age", min_value=0, value=10)
-    capacity_mw = st.number_input("Capacity (MW)", min_value=0.0, value=50.0)
-
-    # Define the primary fuel encoding map
-    fuel_encoding_map = {
-        'Coal': 0,
-        'Oil': 1,
-        'Gas': 2,
-        'Hydro': 3,
-        'Solar': 4,
-        'Wind': 5,
-        'Nuclear': 6
-    }
-
-    # Create the selectbox with descriptive labels
-    primary_fuel = st.selectbox(
-        "Primary Fuel Type",
-        options=list(fuel_encoding_map.keys())  # Display the fuel types
-    )
-
-    # Get the encoded value of the selected fuel type
-    primary_fuel_encoded = fuel_encoding_map[primary_fuel]
-
-    # Class labels for prediction output
-    class_labels = ['very_low', 'low', 'mid', 'high']
-
-    # Button to make predictions
-    if st.button("Classify Power Plant"):
-        # Prepare input data for prediction
-        feature_names = ['latitude', 'longitude', 'plant_age', 'capacity_mw', 'primary_fuel_encoded']
-        input_data = pd.DataFrame([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]], columns=feature_names)
-
-        try:
-            # Ensure scaler is working correctly
-            input_features_scaled = scaler.transform(input_data)
-            # Make the prediction
-            prediction = model.predict(input_features_scaled)
-            
-            # Map the prediction to the class label
-            predicted_class = class_labels[int(prediction[0])]
-            st.success(f"The predicted generation class is: {predicted_class}")
-        
-        except Exception as e:
-            st.error(f"Prediction error: {e}")
+    st.write(f"Loaded model type: {type(model)}")  # Print model type
+    st.write(f"Loaded scaler type: {type(scaler)}")  # Print scaler type
     
-    st.success("Model and Scaler loaded successfully!")
+    if not hasattr(scaler, 'transform'):
+        st.error("The scaler object does not have the 'transform' method. Please ensure it is a valid scaler instance.")
+    elif not hasattr(model, 'predict'):
+        st.error("The model object does not have the 'predict' method. Please ensure it is a valid model instance.")
+    else:
+        # Title of the app
+        st.title("Energy Generation Classification App")
+
+        # Input fields for the features
+        st.header("Input the Features")
+
+        latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=0.0)
+        longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=0.0)
+        plant_age = st.number_input("Plant Age", min_value=0, value=10)
+        capacity_mw = st.number_input("Capacity (MW)", min_value=0.0, value=50.0)
+
+        # Define the primary fuel encoding map
+        fuel_encoding_map = {
+            'Coal': 0,
+            'Oil': 1,
+            'Gas': 2,
+            'Hydro': 3,
+            'Solar': 4,
+            'Wind': 5,
+            'Nuclear': 6
+        }
+
+        # Create the selectbox with descriptive labels
+        primary_fuel = st.selectbox(
+            "Primary Fuel Type",
+            options=list(fuel_encoding_map.keys())  # Display the fuel types
+        )
+
+        # Get the encoded value of the selected fuel type
+        primary_fuel_encoded = fuel_encoding_map[primary_fuel]
+
+        # Class labels for prediction output
+        class_labels = ['very_low', 'low', 'mid', 'high']
+
+        # Button to make predictions
+        if st.button("Classify Power Plant"):
+            # Prepare input data for prediction
+            feature_names = ['latitude', 'longitude', 'plant_age', 'capacity_mw', 'primary_fuel_encoded']
+            input_data = pd.DataFrame([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]], columns=feature_names)
+
+            try:
+                # Ensure scaler is working correctly
+                input_features_scaled = scaler.transform(input_data)
+
+                # Ensure the model has the predict method before attempting to use it
+                if hasattr(model, 'predict'):
+                    # Make the prediction
+                    prediction = model.predict(input_features_scaled)
+
+                    # Map the prediction to the class label
+                    predicted_class = class_labels[int(prediction[0])]
+                    st.success(f"The predicted generation class is: {predicted_class}")
+                else:
+                    st.error("The model does not have a predict method.")
+            except Exception as e:
+                st.error(f"Prediction error: {e}")
+    
+        st.success("Model and Scaler loaded successfully!")
