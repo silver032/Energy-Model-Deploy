@@ -57,14 +57,8 @@ if model is not None and scaler is not None:
         input_data = pd.DataFrame([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]],
                                   columns=['latitude', 'longitude', 'plant_age', 'capacity_mw', 'primary_fuel_encoded'])
 
-        # Debugging: Print input shape before scaling
-        st.write(f"Input data shape: {input_data.shape}")
-
         # Scale the input features and predict
         input_features_scaled = scaler.transform(input_data)
-
-        # Debugging: Print scaled input shape
-        st.write(f"Scaled input shape: {input_features_scaled.shape}")
 
         # Make the prediction
         try:
