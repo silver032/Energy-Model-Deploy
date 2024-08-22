@@ -1,0 +1,6 @@
+streamlit
+scikit-learn
+requests
+folium
+sklearn.preprocessing
+joblib
