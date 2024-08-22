@@ -69,10 +69,15 @@ if model is not None and scaler is not None:
         # Make the prediction
         try:
             prediction = model.predict(input_features_scaled)
-            predicted_class = class_labels[int(prediction[0])]
+
+            # Check if prediction is an integer or string
+            if isinstance(prediction[0], int):
+                predicted_class = class_labels[prediction[0]]
+            else:
+                predicted_class = prediction[0]
+
             st.success(f"The predicted generation class is: {predicted_class}")
         except Exception as e:
             st.error(f"Prediction error: {e}")
 else:
     st.error("Failed to load model or scaler.")
-
