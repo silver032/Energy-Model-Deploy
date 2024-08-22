@@ -18,8 +18,8 @@ def load_pickle_from_url(url):
         return None
 
 # Use the updated raw URLs
-model_url = 'https://github.com/silver032/Energy-Generation-Deployment/raw/main/random_forest_model.pkl'
-scaler_url = 'https://github.com/silver032/Energy-Generation-Deployment/raw/main/scaler.pkl'
+model_url = 'https://github.com/silver032/Energy-Model-Deploy/raw/main/random_forest_model.pkl'
+scaler_url = 'https://github.com/silver032/Energy-Model-Deploy/raw/main/scaler.pkl'
 
 # Load model and scaler using pickle
 model = load_pickle_from_url(model_url)
