@@ -25,6 +25,10 @@ scaler = load_pickle_from_url(scaler_url)
 
 # Ensure model and scaler are loaded properly
 if model is not None and scaler is not None:
+    st.write(f"Loaded model type: {type(model)}")
+    st.write(f"Model has predict method: {hasattr(model, 'predict')}")
+    st.write(f"Loaded scaler type: {type(scaler)}")
+
     # App title
     st.title("Energy Generation Classification App")
 
@@ -53,11 +57,22 @@ if model is not None and scaler is not None:
         input_data = pd.DataFrame([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]],
                                   columns=['latitude', 'longitude', 'plant_age', 'capacity_mw', 'primary_fuel_encoded'])
 
+        # Debugging: Print input shape before scaling
+        st.write(f"Input data shape: {input_data.shape}")
+
         # Scale the input features and predict
         input_features_scaled = scaler.transform(input_data)
-        prediction = model.predict(input_features_scaled)
-        predicted_class = class_labels[int(prediction[0])]
 
-        st.success(f"The predicted generation class is: {predicted_class}")
+        # Debugging: Print scaled input shape
+        st.write(f"Scaled input shape: {input_features_scaled.shape}")
+
+        # Make the prediction
+        try:
+            prediction = model.predict(input_features_scaled)
+            predicted_class = class_labels[int(prediction[0])]
+            st.success(f"The predicted generation class is: {predicted_class}")
+        except Exception as e:
+            st.error(f"Prediction error: {e}")
 else:
     st.error("Failed to load model or scaler.")
+
