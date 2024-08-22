@@ -1,6 +1,7 @@
 import streamlit as st
 import pickle
 import numpy as np
+import pandas as pd
 import requests
 from io import BytesIO
 
@@ -18,8 +19,8 @@ def load_pickle_from_url(url):
         return None
 
 # Use the updated raw URLs
-model_url = 'https://github.com/silver032/Energy-Generation-Deployment/raw/main/random_forest_model.pkl'
-scaler_url = 'https://github.com/silver032/Energy-Generation-Deployment/raw/main/scaler.pkl'
+model_url = 'https://github.com/silver032/Energy-Model-Deploy/raw/main/random_forest_model.pkl'
+scaler_url = 'https://github.com/silver032/Energy-Model-Deploy/raw/main/scaler.pkl'
 
 # Load model and scaler using pickle
 model = load_pickle_from_url(model_url)
@@ -68,11 +69,12 @@ else:
     # Button to make predictions
     if st.button("Classify Power Plant"):
         # Prepare input data for prediction
-        input_features = np.array([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]])
+        feature_names = ['latitude', 'longitude', 'plant_age', 'capacity_mw', 'primary_fuel_encoded']
+        input_data = pd.DataFrame([[latitude, longitude, plant_age, capacity_mw, primary_fuel_encoded]], columns=feature_names)
 
         try:
             # Ensure scaler is working correctly
-            input_features_scaled = scaler.transform(input_features)
+            input_features_scaled = scaler.transform(input_data)
             # Make the prediction
             prediction = model.predict(input_features_scaled)
             
