@@ -24,7 +24,7 @@ model = load_pickle_from_url(model_url)
 scaler = load_pickle_from_url(scaler_url)
 
 # Ensure model and scaler are loaded properly
-if model and scaler:
+if model is not None and scaler is not None:
     # App title
     st.title("Energy Generation Classification App")
 
